@@ -6,15 +6,18 @@ import {AddItemForm} from './AddItemForm.tsx';
 import ButtonAppBar from './ButtonAppBar.tsx';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import {Container, createTheme, ThemeProvider} from '@mui/material';
+import {Container, createTheme, CssBaseline, ThemeProvider} from '@mui/material';
+
+
 export type FilterValues = 'all' | 'active' | 'completed'
 
-type TodoListType = {
+export type TodoListType = {
     id: string,
     title: string,
     filter: FilterValues,
 }
 
+type ThemeMode = 'light' | 'dark';
 
 function App() {
 
@@ -127,7 +130,7 @@ function App() {
     }
 
     const updateTodoListTitle = (todoListId: string, updateTitle: string) => {
-        settodoLists(todoLists.map(el=>el.id===todoListId ? {...el,title:updateTitle} : el))
+        settodoLists(todoLists.map(el => el.id === todoListId ? {...el, title: updateTitle} : el))
     }
 
 
@@ -148,66 +151,73 @@ function App() {
     //     },
     // });
 
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: "#6f7b7e"
+    const [themeMode, setThemeMode] = useState<ThemeMode>('light')
+
+
+    const theme = createTheme({
+        palette: {
+            mode: themeMode === 'light' ? 'dark' : 'light',
+            primary: {
+                main: '#6f7b7e'
+            }
         }
+    })
+
+    const changeModeHandler = () => {
+        setThemeMode(themeMode === 'light' ? 'dark' : 'light')
     }
-})
+        return (
+            <ThemeProvider theme={theme}>
+          <CssBaseline/>
+                <Container fixed>
+                    <div className="app">
+                        <ButtonAppBar changeModeHandler={changeModeHandler}/>
+                        <Grid container>
+                            <AddItemForm addItem={addTodoList}/>
+                        </Grid>
+                        <Grid container>
+                            {todoLists.map(el => {
+
+                                let filteredTasks = tasks[el.id]
+                                if (el.filter === 'active') {
+                                    filteredTasks = tasks[el.id].filter(task => !task.isDone)
+                                }
+                                if (el.filter === 'completed') {
+                                    filteredTasks = tasks[el.id].filter(task => task.isDone)
+                                }
+
+                                return (
+                                    <Paper elevation={3} sx={{p: 1, m: 1}}>
+                                        <TodolistItem
+                                            key={el.id}
+                                            todoListId={el.id}
+                                            title={el.title}
+                                            tasks={filteredTasks}
+                                            date={'1.201'}
+                                            deleteTask={deleteTask}
+                                            changeFilter={changeFilter}
+                                            addTask={addTask}
+                                            filter={el.filter}
+                                            changeTaskStatus={changeTaskStatus}
+                                            deleteTodolist={deleteTodolist}
+                                            updateTaskTitle={updateTaskTitle}
+                                            updateTodoListTitle={updateTodoListTitle}
+                                        />
+                                    </Paper>
+
+                                )
+                            })}
+                        </Grid>
+                    </div>
+                </Container>
+            </ThemeProvider>
 
 
-    return (
-        <ThemeProvider theme={theme}>
-            <Container fixed>
-                <div className="app">
-                    <ButtonAppBar/>
-                    <Grid container>
-                        <AddItemForm addItem={addTodoList}/>
-                    </Grid>
-                    <Grid container>
-                        {todoLists.map(el => {
-
-                            let filteredTasks = tasks[el.id]
-                            if (el.filter === 'active') {
-                                filteredTasks = tasks[el.id].filter(task => !task.isDone)
-                            }
-                            if (el.filter === 'completed') {
-                                filteredTasks = tasks[el.id].filter(task => task.isDone)
-                            }
-
-                            return (
-                                <Paper elevation={3} sx={{p:1, m:1}}>
-                                    <TodolistItem
-                                        key={el.id}
-                                        todoListId={el.id}
-                                        title={el.title}
-                                        tasks={filteredTasks}
-                                        date={'1.201'}
-                                        deleteTask={deleteTask}
-                                        changeFilter={changeFilter}
-                                        addTask={addTask}
-                                        filter={el.filter}
-                                        changeTaskStatus={changeTaskStatus}
-                                        deleteTodolist={deleteTodolist}
-                                        updateTaskTitle={updateTaskTitle}
-                                        updateTodoListTitle={updateTodoListTitle}
-                                    />
-                                </Paper>
-
-                            )
-                        })}
-                    </Grid>
-                </div>
-            </Container>
-        </ThemeProvider>
+        )
+    }
 
 
-    )
-}
-
-
-export default App
+    export default App
 
 
 // брать импорт конкретно с документации компоненты mui

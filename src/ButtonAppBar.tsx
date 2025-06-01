@@ -6,9 +6,14 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import {MenuButton} from './MenuButton.tsx';
-import {useTheme} from '@mui/material';
+import {Switch, useTheme} from '@mui/material';
 
-export default function ButtonAppBar() {
+type Props = {
+    changeModeHandler:()=>void;
+}
+
+
+export default function ButtonAppBar({changeModeHandler}:Props) {
     const theme = useTheme();
     return (
         <Box sx={{flexGrow: 1, marginTop:"80px"}}>
@@ -29,6 +34,8 @@ export default function ButtonAppBar() {
                     <MenuButton background={theme.palette.primary.dark} color="inherit">Login</MenuButton>
                     <MenuButton color="inherit">Logout</MenuButton>
                     <MenuButton color="inherit">faq</MenuButton>
+                    <Switch color={"secondary"} onChange={changeModeHandler}/>
+
                 </Toolbar>
             </AppBar>
         </Box>
