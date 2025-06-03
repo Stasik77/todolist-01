@@ -17,6 +17,11 @@ export type TodoListType = {
     filter: FilterValues,
 }
 
+export type TasksStateType = {
+    [key: string]: TaskType[]
+}
+
+
 type ThemeMode = 'light' | 'dark';
 
 function App() {
@@ -120,6 +125,7 @@ function App() {
     const deleteTodolist = (todoListId: string) => {
         settodoLists((prevState) => prevState.filter(el => el.id !== todoListId))
         delete tasks[todoListId]
+        setTasks({...tasks})
     }
 
     const updateTaskTitle = (todoListId: string, taskId: string, updateTitle: string) => {
