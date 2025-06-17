@@ -43,10 +43,14 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
             return {...state, [action.payload.id]: [],}
 
         }
-        case 'REMOVE-TODOLIST':{
-            return {...state, [action.payload.id]}
+        case 'REMOVE-TODOLIST': {
+            const copyState = {...state}
+            delete copyState[action.payload.id];
+            return copyState
         }
 
+// const{[action.payload.id]:_,...rest }=state;
+//         return rest
 
         default:
             throw new Error(`i dont understand action type`);
@@ -83,7 +87,13 @@ export const changeTaskTitleAC = (payload: { taskId: string, todolistId: string,
 
 
 //Action Type
-type ActionsType = | RemoveTaskAction |  AddTaskAction | ChangeTaskAction | ChangeTitleTaskAction | AddTodolistActionType | RemoveTodolistAction
+type ActionsType =
+    | RemoveTaskAction
+    | AddTaskAction
+    | ChangeTaskAction
+    | ChangeTitleTaskAction
+    | AddTodolistActionType
+    | RemoveTodolistAction
 type RemoveTaskAction = ReturnType<typeof removeTaskAC>
 type AddTaskAction = ReturnType<typeof addTaskAC>
 type ChangeTaskAction = ReturnType<typeof changeTaskStatusAC>
